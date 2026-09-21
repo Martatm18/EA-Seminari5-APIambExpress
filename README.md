@@ -1,0 +1,3 @@
+En la capa de servicios, hemos separado la lógica de los autores, los libros y la conexión con MongoDB en diferentes servicios. De esta forma, los controladores se encargan únicamente de recibir las peticiones y devolver las respuestas, mientras que los servicios se encargan de realizar las operaciones con los datos. Esto hace que el código esté más organizado y sea más fácil de mantener. 
+
+En la parte de REST, hemos cambiado las rutas para que sean más sencillas y sigan una estructura más estándar. En lugar de poner acciones como /authors/create o /books/get, usamos directamente el nombre del recurso, como /authors o /books, y utilizamos los verbos HTTP (GET, POST, PUT, DELETE) para indicar qué queremos hacer.
