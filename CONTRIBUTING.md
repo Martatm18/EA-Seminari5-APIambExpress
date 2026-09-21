@@ -52,6 +52,8 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
 - **Rutas REST** (`802f7d5`): la acción la indica el método HTTP, no la URL. Antes era
   `POST /authors/create` y ahora es `POST /authors`; igual para leer, modificar y borrar, en autores
   y en libros. Al modificar se responde 200 y al borrar 204.
+- **Guarda del id**: si el id de la URL no tiene forma de id de MongoDB, la API responde 400
+  en lugar de 500.
 
 ### En curso
 

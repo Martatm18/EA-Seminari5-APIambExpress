@@ -88,7 +88,7 @@ src/
   routes/          El mapa de URLs: qué petición va a qué controller
     Author.ts, Book.ts
   middleware/      Lo que se ejecuta entre la ruta y el controller
-    Joi.ts           Valida el body con Joi; si no es válido responde 422
+    Joi.ts           Guardas: validan el body (422) y el id de la URL (400)
   controllers/     Leen la petición (req), llaman al service y eligen la respuesta (res)
     Author.ts, Book.ts
   services/        Leen y escriben en la base de datos a través de los models. No saben que existe HTTP
@@ -128,8 +128,9 @@ Ejemplo con curl (también sirve Postman o Thunder Client):
 curl -X POST http://localhost:1337/authors -H "Content-Type: application/json" -d '{"name":"Ana"}'
 ```
 
-Códigos de respuesta: 201 al crear, 200 al leer o modificar, 204 al borrar, 404 si el id no existe,
-422 si el body no es válido y 500 si falla algo en el servidor.
+Códigos de respuesta: 201 al crear, 200 al leer o modificar, 204 al borrar, 400 si el id de la URL
+no tiene forma de id de MongoDB, 404 si el id no existe, 422 si el body no es válido y 500 si falla
+algo en el servidor.
 
 ## Cómo contribuir
 
