@@ -114,12 +114,12 @@ si un día se cambiara Express por otro framework, esas dos carpetas no habría 
 | POST | `/authors` | Crea un autor | `{ "name": "..." }` |
 | GET | `/authors` | Lista todos los autores | |
 | GET | `/authors/:authorId` | Devuelve un autor | |
-| PATCH | `/authors/:authorId` | Modifica un autor | `{ "name": "..." }` |
+| PUT | `/authors/:authorId` | Reemplaza los datos de un autor | `{ "name": "..." }` |
 | DELETE | `/authors/:authorId` | Borra un autor | |
 | POST | `/books` | Crea un libro | `{ "title": "...", "author": "<id de un autor>" }` |
 | GET | `/books` | Lista todos los libros, con los datos de su autor | |
 | GET | `/books/:bookId` | Devuelve un libro, con los datos de su autor | |
-| PATCH | `/books/:bookId` | Modifica un libro | `{ "title": "...", "author": "<id de un autor>" }` |
+| PUT | `/books/:bookId` | Reemplaza los datos de un libro | `{ "title": "...", "author": "<id de un autor>" }` |
 | DELETE | `/books/:bookId` | Borra un libro | |
 
 Ejemplo con curl (también sirve Postman o Thunder Client):

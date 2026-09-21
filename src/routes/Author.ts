@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/', ValidateJoi(Schemas.author.create), controller.createAuthor);
 router.get('/:authorId', ValidateId('authorId'), controller.readAuthor);
 router.get('/', controller.readAll);
-router.patch('/:authorId', ValidateId('authorId'), ValidateJoi(Schemas.author.update), controller.updateAuthor);
+router.put('/:authorId', ValidateId('authorId'), ValidateJoi(Schemas.author.update), controller.updateAuthor);
 router.delete('/:authorId', ValidateId('authorId'), controller.deleteAuthor);
 
 export = router;

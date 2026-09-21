@@ -54,6 +54,10 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
   y en libros. Al modificar se responde 200 y al borrar 204.
 - **Guarda del id**: si el id de la URL no tiene forma de id de MongoDB, la API responde 400
   en lugar de 500.
+- **PUT en lugar de PATCH**: actualizar pide todos los campos, así que reemplaza el recurso
+  entero. Eso es un PUT, que además es idempotente.
+  Regla: PUT cuando se envía el recurso completo (lo reemplaza); PATCH cuando se envían solo
+  los campos que cambian.
 
 ### En curso
 
