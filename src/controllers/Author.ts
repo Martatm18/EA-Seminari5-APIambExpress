@@ -2,11 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import AuthorService from '../services/AuthorService';
 
 const createAuthor = (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body;
-
-return AuthorService.createAuthor(name)
-    .then((author) => res.status(201).json({ author }))
-    .catch((error) => res.status(500).json({ error }));
+    return AuthorService.createAuthor(req.body)
+        .then((author) => res.status(201).json({ author }))
+        .catch((error) => res.status(500).json({ error }));
 };
 
 const readAuthor = (req: Request<{ authorId: string }>, res: Response, next: NextFunction) => {

@@ -1,7 +1,7 @@
 import Joi, { ObjectSchema } from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import { IAuthor } from '../models/Author';
-import { IBook } from '../models/Book';
+import { BOOK_LANGUAGES, BOOK_TAGS, IBook } from '../models/Book';
 import Logging from '../library/Logging';
 
 export const ValidateJoi = (schema: ObjectSchema) => {
@@ -37,24 +37,60 @@ export const ValidateId = (paramName: string) => {
 export const Schemas = {
     author: {
         create: Joi.object<IAuthor>({
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            email: Joi.string().email().required(),
+            password: Joi.string().min(8).required(),
+            birthDate: Joi.date(),
+            nationality: Joi.string(),
+            biography: Joi.string().max(1000),
+            website: Joi.string().uri(),
+            photoUrl: Joi.string().uri(),
+            active: Joi.boolean(),
+            role: Joi.string().valid('author', 'admin')
         }),
         update: Joi.object<IAuthor>({
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            email: Joi.string().email().required(),
+            password: Joi.string().min(8).required(),
+            birthDate: Joi.date(),
+            nationality: Joi.string(),
+            biography: Joi.string().max(1000),
+            website: Joi.string().uri(),
+            photoUrl: Joi.string().uri(),
+            active: Joi.boolean(),
+            role: Joi.string().valid('author', 'admin')
         })
     },
     book: {
         create: Joi.object<IBook>({
-            author: Joi.string()
-                .regex(/^[0-9a-fA-F]{24}$/)
+            title: Joi.string().required(),
+            authors: Joi.array()
+                .items(Joi.string().regex(OBJECT_ID))
+                .min(1)
                 .required(),
-            title: Joi.string().required()
+            isbn: Joi.string().required(),
+            edition: Joi.number().min(1),
+            publisher: Joi.string(),
+            publishedYear: Joi.number().min(1450).max(2100),
+            pages: Joi.number().min(1),
+            language: Joi.string().valid(...BOOK_LANGUAGES),
+            tags: Joi.array().items(Joi.string().valid(...BOOK_TAGS)),
+            price: Joi.number().min(0)
         }),
         update: Joi.object<IBook>({
-            author: Joi.string()
-                .regex(/^[0-9a-fA-F]{24}$/)
+            title: Joi.string().required(),
+            authors: Joi.array()
+                .items(Joi.string().regex(OBJECT_ID))
+                .min(1)
                 .required(),
-            title: Joi.string().required()
+            isbn: Joi.string().required(),
+            edition: Joi.number().min(1),
+            publisher: Joi.string(),
+            publishedYear: Joi.number().min(1450).max(2100),
+            pages: Joi.number().min(1),
+            language: Joi.string().valid(...BOOK_LANGUAGES),
+            tags: Joi.array().items(Joi.string().valid(...BOOK_TAGS)),
+            price: Joi.number().min(0)
         })
     }
 };

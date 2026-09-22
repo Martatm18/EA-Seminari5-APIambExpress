@@ -1,12 +1,8 @@
-import mongoose from 'mongoose';
-import Author from '../models/Author';
+import Author, { IAuthor } from '../models/Author';
 
 //Funcion que crea un autor en la base de datos
-export const createAuthor = (name: string) => {
-    const author = new Author({
-        _id: new mongoose.Types.ObjectId(),
-        name
-    });
+export const createAuthor = (data: IAuthor) => {
+    const author = new Author(data);
 
     return author.save();
 };
@@ -22,7 +18,7 @@ export const getAllAuthors = () => {
 };
 
 //Actualiza un autor en la base de datos
-export const updateAuthor = (authorId: string, data: { name: string }) => {
+export const updateAuthor = (authorId: string, data: IAuthor) => {
     return Author.findByIdAndUpdate(authorId, data, { returnDocument: 'after' });
 };
 

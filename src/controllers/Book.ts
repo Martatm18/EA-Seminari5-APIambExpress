@@ -2,11 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import BookService from '../services/BookService';
 
 const createBook = (req: Request, res: Response, next: NextFunction) => {
-    const { author, title } = req.body;
-
-    return BookService.createBook(author, title)
-    .then((book) => res.status(201).json({ book }))
-    .catch((error) => res.status(500).json({ error }));
+    return BookService.createBook(req.body)
+        .then((book) => res.status(201).json({ book }))
+        .catch((error) => res.status(500).json({ error }));
 };
 
 const readBook = (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
