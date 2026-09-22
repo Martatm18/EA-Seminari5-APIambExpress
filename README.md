@@ -23,7 +23,7 @@ Qué está hecho y qué queda por hacer: [CONTRIBUTING.md](CONTRIBUTING.md).
 | [Joi](https://joi.dev/) | 18.2 | Comprueba que el body de una petición es correcto |
 | [dotenv](https://github.com/motdotla/dotenv) | 17.4 | Carga las variables del archivo `.env` en `process.env` |
 | [chalk](https://github.com/chalk/chalk) | 4.1 | Pone colores a los mensajes de la consola |
-| [cors](https://github.com/expressjs/cors) | 2.8 | Middleware de CORS. Instalado, pero aún no se usa: el CORS sigue escrito a mano en `server.ts` |
+| [cors](https://github.com/expressjs/cors) | 2.8 | Controla desde qué origen puede llamar un navegador a la API |
 | [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) | 5.0 | Muestra la documentación de la API en `/api-docs` |
 | [tsx](https://tsx.is/) | 4.23 | Ejecuta TypeScript sin compilar y reinicia la API al guardar (`npm run dev`) |
 | [Prettier](https://prettier.io/) | extensión de VS Code | Da formato al código al guardar (reglas en `.prettierrc`) |
@@ -62,6 +62,7 @@ cp .env.example .env
 |---|---|---|
 | `MONGO_URL` | Dirección de tu MongoDB | `mongodb://127.0.0.1:27017/seminari5` |
 | `SERVER_PORT` | Puerto en el que escucha la API | `1337` |
+| `CORS_ORIGIN` | Desde qué dirección se puede llamar a la API desde un navegador | `*` (cualquiera) |
 
 ## Ejecutar
 
@@ -81,11 +82,30 @@ npm start
 
 `npm run build` compila de TypeScript a JavaScript en `build/`. Si cambias el código, vuelve a ejecutarlo antes de `npm start`.
 
+## Datos de ejemplo
+
+Para no empezar con la base de datos vacía, hay 5 autores y 12 libros de ejemplo en `src/seed-data.ts`:
+
+```
+npm run seed
+```
+
+Este comando solo inserta los datos si la base de datos está vacía. Para borrar los autores y los
+libros que haya y volver a crearlos:
+
+```
+npm run seed -- --reset
+```
+
+Siempre trabaja sobre la base de datos de tu `.env`.
+
 ## Estructura del proyecto
 
 ```
 src/
   server.ts        Punto de entrada: conecta con MongoDB, registra el middleware y las rutas, y arranca el servidor
+  seed.ts          Script que llena la base de datos con los datos de ejemplo
+  seed-data.ts     Los datos de ejemplo: autores y libros
   config/          Lee las variables de entorno y las reúne en un objeto config
   library/         Utilidades compartidas
     Logging.ts       Mensajes de consola con fecha y color (info, warning, error)
@@ -93,6 +113,7 @@ src/
     Author.ts, Book.ts
   middleware/      Lo que se ejecuta entre la ruta y el controller
     Joi.ts           Guardas: validan el body (422) y el id de la URL (400)
+    Cors.ts          Cabeceras de CORS, configuradas con CORS_ORIGIN
   controllers/     Leen la petición (req), llaman al service y eligen la respuesta (res)
     Author.ts, Book.ts
   services/        Leen y escriben en la base de datos a través de los models. No saben que existe HTTP
@@ -115,16 +136,23 @@ si un día se cambiara Express por otro framework, esas dos carpetas no habría 
 | Método | URL | Qué hace | Body |
 |---|---|---|---|
 | GET | `/ping` | Comprueba que la API está viva | |
-| POST | `/authors` | Crea un autor | `{ "name": "..." }` |
+| POST | `/authors` | Crea un autor | `{ "name": "...", "email": "...", "password": "..." }` |
 | GET | `/authors` | Lista todos los autores | |
 | GET | `/authors/:authorId` | Devuelve un autor | |
-| PUT | `/authors/:authorId` | Reemplaza los datos de un autor | `{ "name": "..." }` |
+| PUT | `/authors/:authorId` | Reemplaza los datos de un autor | `{ "name": "...", "email": "...", "password": "..." }` |
 | DELETE | `/authors/:authorId` | Borra un autor | |
-| POST | `/books` | Crea un libro | `{ "title": "...", "author": "<id de un autor>" }` |
-| GET | `/books` | Lista todos los libros, con los datos de su autor | |
-| GET | `/books/:bookId` | Devuelve un libro, con los datos de su autor | |
-| PUT | `/books/:bookId` | Reemplaza los datos de un libro | `{ "title": "...", "author": "<id de un autor>" }` |
+| POST | `/books` | Crea un libro | `{ "title": "...", "authors": ["<id de un autor>"], "isbn": "..." }` |
+| GET | `/books` | Lista todos los libros, con los datos de sus autores | |
+| GET | `/books/:bookId` | Devuelve un libro, con los datos de sus autores | |
+| PUT | `/books/:bookId` | Reemplaza los datos de un libro | `{ "title": "...", "authors": ["<id de un autor>"], "isbn": "..." }` |
 | DELETE | `/books/:bookId` | Borra un libro | |
+
+Un autor tiene además estos campos opcionales: `birthDate`, `nationality`, `biography`, `website`,
+`photoUrl`, `active` y `role`. La contraseña nunca se devuelve en las respuestas.
+
+Un libro tiene además: `edition`, `publisher`, `publishedYear`, `pages`, `language` (`es`, `ca` o `en`),
+`tags` (`ciencia-ficcion`, `fantasia`, `novela`, `ensayo`, `poesia`, `historia`) y `price`.
+Un libro puede tener más de un autor, y necesita al menos uno.
 
 Ejemplo con curl (también sirve Postman o Thunder Client):
 

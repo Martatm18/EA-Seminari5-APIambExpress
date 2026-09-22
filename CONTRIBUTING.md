@@ -62,6 +62,13 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
   y `.env.example` para que cada miembro configure su propio MongoDB.
 - **Stack actualizado**: Node 24 LTS, TypeScript 6, Express 5, Mongoose 9, Joi 18 y dotenv 17.
   Mongoose 6 no soportaba MongoDB 6 o superior. Nuevo `npm run dev`, que reinicia la API al guardar.
+- **CORS con el paquete `cors`**: `middleware/Cors.ts` sustituye a las cabeceras escritas a mano en
+  `server.ts`. El origen se configura con `CORS_ORIGIN` en el `.env`.
+- **Diez atributos por modelo**: el autor añade email (único), contraseña, fecha de nacimiento,
+  nacionalidad, biografía, web, foto, activo y rol. El libro añade ISBN (único), edición, editorial,
+  año, páginas, idioma, tags y precio, y ahora puede tener **más de un autor** (`authors`).
+- **Datos de ejemplo**: `npm run seed` llena la base de datos con 5 autores y 12 libros
+  (`src/seed.ts` y `src/seed-data.ts`). Con `-- --reset` la rehace desde cero.
 
 ### En curso
 
@@ -71,9 +78,16 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
 
 Objetivos del Seminario 5:
 
-- [ ] Estructura del proyecto
-- [ ] Middleware de CORS
+- [x] Estructura del proyecto
+- [x] Middleware de CORS
 - [ ] Middleware de entrada: validación y logger
 - [ ] Middleware de salida: gestor de errores
 - [ ] Documentación con Swagger
 - [ ] Linter
+
+Y dos cosas que han quedado a medias al añadir los atributos nuevos:
+
+- [ ] **Cifrar la contraseña** con un hook `pre-save`. Ahora se guarda tal cual, aunque nunca se
+  devuelve en las respuestas.
+- [ ] **Responder 409 cuando se repite un email o un ISBN**. Hoy sale un 500 con el error de
+  MongoDB, porque todavía no hay gestor de errores.
