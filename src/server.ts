@@ -5,8 +5,8 @@ import { config } from './config/config';
 import Logging from './library/Logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
-import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from './config/swagger';
+import swaggerUi from 'swagger-ui-express'; // permite mostrar Swagger en el navegador.
+import swaggerDocument from './config/swagger'; // importa el documento que hemos creado en swagger.ts
 
 const router = express();
 
