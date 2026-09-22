@@ -27,7 +27,7 @@ export const updateBook = (
     bookId: string,
     data: { author: string; title: string }
 ) => {
-    return Book.findByIdAndUpdate(bookId, data, { new: true }).populate('author');
+    return Book.findByIdAndUpdate(bookId, data, { returnDocument: 'after' }).populate('author');
 };
 
 //Elimina un libro de la base de datos

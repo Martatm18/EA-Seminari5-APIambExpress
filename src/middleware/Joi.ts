@@ -24,7 +24,9 @@ const OBJECT_ID = /^[0-9a-fA-F]{24}$/;
 // Guarda del id de la URL: si no tiene forma de id de MongoDB, responde 400
 export const ValidateId = (paramName: string) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        if (!OBJECT_ID.test(req.params[paramName])) {
+        const id = req.params[paramName];
+
+        if (typeof id !== 'string' || !OBJECT_ID.test(id)) {
             return res.status(400).json({ message: `${paramName} no es un id válido` });
         }
 

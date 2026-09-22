@@ -9,7 +9,7 @@ return AuthorService.createAuthor(name)
     .catch((error) => res.status(500).json({ error }));
 };
 
-const readAuthor = (req: Request, res: Response, next: NextFunction) => {
+const readAuthor = (req: Request<{ authorId: string }>, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
 
     return AuthorService.getAuthorById(authorId)
@@ -27,7 +27,7 @@ const readAll = (req: Request, res: Response, next: NextFunction) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
-const updateAuthor = (req: Request, res: Response, next: NextFunction) => {
+const updateAuthor = (req: Request<{ authorId: string }>, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
 
     return AuthorService.updateAuthor(authorId, req.body)
@@ -39,7 +39,7 @@ const updateAuthor = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const deleteAuthor = (req: Request, res: Response, next: NextFunction) => {
+const deleteAuthor = (req: Request<{ authorId: string }>, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
 
     return AuthorService.deleteAuthor(authorId)

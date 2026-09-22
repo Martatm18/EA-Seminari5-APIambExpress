@@ -9,7 +9,7 @@ const createBook = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const readBook = (req: Request, res: Response, next: NextFunction) => {
+const readBook = (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
     const bookId = req.params.bookId;
 
     return BookService.getBookById(bookId)
@@ -27,7 +27,7 @@ const readAll = (req: Request, res: Response, next: NextFunction) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
-const updateBook = (req: Request, res: Response, next: NextFunction) => {
+const updateBook = (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
     const bookId = req.params.bookId;
 
     return BookService.updateBook(bookId, req.body)
@@ -39,7 +39,7 @@ const updateBook = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-const deleteBook = (req: Request, res: Response, next: NextFunction) => {
+const deleteBook = (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
     const bookId = req.params.bookId;
 
     return BookService.deleteBook(bookId)
