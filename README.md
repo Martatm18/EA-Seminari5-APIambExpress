@@ -15,19 +15,23 @@ Qué está hecho y qué queda por hacer: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 | Tecnología | Versión | Para qué se usa |
 |---|---|---|
-| [Node.js](https://nodejs.org/) | 14.x o superior | Ejecuta JavaScript fuera del navegador: es el servidor |
-| [TypeScript](https://www.typescriptlang.org/) | 4.5 | JavaScript con tipos. Se compila a JavaScript en `build/` |
-| [Express](https://expressjs.com/) | 4.17 | Recibe las peticiones HTTP y las reparte por rutas y middleware |
+| [Node.js](https://nodejs.org/) | 24 LTS (mínimo 22.12) | Ejecuta JavaScript fuera del navegador: es el servidor |
+| [TypeScript](https://www.typescriptlang.org/) | 6.0 | JavaScript con tipos. Se compila a JavaScript en `build/` |
+| [Express](https://expressjs.com/) | 5.2 | Recibe las peticiones HTTP y las reparte por rutas y middleware |
 | [MongoDB](https://www.mongodb.com/) | local o Atlas | Base de datos que guarda documentos |
-| [Mongoose](https://mongoosejs.com/) | 6.2 | Define la forma de los datos (esquemas) y habla con MongoDB |
-| [Joi](https://joi.dev/) | 17.6 | Comprueba que el body de una petición es correcto |
-| [dotenv](https://github.com/motdotla/dotenv) | 16.0 | Carga las variables del archivo `.env` en `process.env` |
+| [Mongoose](https://mongoosejs.com/) | 9.10 | Define la forma de los datos (esquemas) y habla con MongoDB |
+| [Joi](https://joi.dev/) | 18.2 | Comprueba que el body de una petición es correcto |
+| [dotenv](https://github.com/motdotla/dotenv) | 17.4 | Carga las variables del archivo `.env` en `process.env` |
 | [chalk](https://github.com/chalk/chalk) | 4.1 | Pone colores a los mensajes de la consola |
+| [cors](https://github.com/expressjs/cors) | 2.8 | Middleware de CORS. Instalado, pero aún no se usa: el CORS sigue escrito a mano en `server.ts` |
+| [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) | 5.0 | Muestra la documentación de la API en `/api-docs` |
+| [tsx](https://tsx.is/) | 4.23 | Ejecuta TypeScript sin compilar y reinicia la API al guardar (`npm run dev`) |
 | [Prettier](https://prettier.io/) | extensión de VS Code | Da formato al código al guardar (reglas en `.prettierrc`) |
 
 ## Requisitos previos
 
-- [Node.js](https://nodejs.org/) (versión 14.x o superior). Incluye [npm](https://www.npmjs.com/).
+- [Node.js](https://nodejs.org/) 24 LTS (mínimo 22.12). Incluye [npm](https://www.npmjs.com/).
+  Si usas [nvm](https://github.com/nvm-sh/nvm), `nvm use` elige la versión indicada en `.nvmrc`.
 - [MongoDB](https://www.mongodb.com/): una instancia local o un cluster en MongoDB Atlas.
 - [VS Code](https://code.visualstudio.com/) con la extensión Prettier (recomendado).
 
@@ -46,8 +50,6 @@ cd EA-Seminari5-APIambExpress
 npm install
 ```
 
-Al terminar, `npm install` también compila el proyecto una vez.
-
 ## Configurar las variables de entorno
 
 Cada miembro del equipo tiene su propio `.env`, que **no se sube a git**. Se crea copiando la plantilla:
@@ -61,21 +63,23 @@ cp .env.example .env
 | `MONGO_URL` | Dirección de tu MongoDB | `mongodb://127.0.0.1:27017/seminari5` |
 | `SERVER_PORT` | Puerto en el que escucha la API | `1337` |
 
-## Compilar y ejecutar
+## Ejecutar
 
-Compilar de TypeScript a JavaScript (genera `build/`):
+Mientras programas, arranca la API en modo desarrollo. Se reinicia sola cada vez que guardas un archivo:
 ```
-npm run build
-```
-
-Arrancar la API:
-```
-npm start
+npm run dev
 ```
 
 Para comprobar que responde, abre http://localhost:1337/ping en el navegador. Debe devolver `{"hello":"world"}`.
+La documentación de la API (Swagger) está en http://localhost:1337/api-docs.
 
-Si cambias el código, vuelve a ejecutar `npm run build` antes de `npm start`.
+Para ejecutar la versión compilada, como se haría en un servidor:
+```
+npm run build
+npm start
+```
+
+`npm run build` compila de TypeScript a JavaScript en `build/`. Si cambias el código, vuelve a ejecutarlo antes de `npm start`.
 
 ## Estructura del proyecto
 

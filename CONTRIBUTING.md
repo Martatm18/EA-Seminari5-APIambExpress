@@ -58,11 +58,14 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
   entero. Eso es un PUT, que además es idempotente.
   Regla: PUT cuando se envía el recurso completo (lo reemplaza); PATCH cuando se envían solo
   los campos que cambian.
+- **Estructura básica** (`basic-structure`): README, este CONTRIBUTING, `.gitignore` con el `.env`,
+  y `.env.example` para que cada miembro configure su propio MongoDB.
+- **Stack actualizado**: Node 24 LTS, TypeScript 6, Express 5, Mongoose 9, Joi 18 y dotenv 17.
+  Mongoose 6 no soportaba MongoDB 6 o superior. Nuevo `npm run dev`, que reinicia la API al guardar.
 
 ### En curso
 
-- **`basic-structure`**: README, este CONTRIBUTING, `.gitignore` con el `.env`, y `.env.example`
-  para que cada miembro configure su propio MongoDB.
+- Nada en este momento.
 
 ### Pendiente
 
