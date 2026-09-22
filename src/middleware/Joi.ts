@@ -91,6 +91,18 @@ export const Schemas = {
             language: Joi.string().valid(...BOOK_LANGUAGES),
             tags: Joi.array().items(Joi.string().valid(...BOOK_TAGS)),
             price: Joi.number().min(0)
+        }),
+        // Para POST /books/:bookId/tags: un solo tag
+        addTag: Joi.object({
+            tag: Joi.string()
+                .valid(...BOOK_TAGS)
+                .required()
+        }),
+        // Para PUT /books/:bookId/tags: la lista entera
+        replaceTags: Joi.object({
+            tags: Joi.array()
+                .items(Joi.string().valid(...BOOK_TAGS))
+                .required()
         })
     }
 };

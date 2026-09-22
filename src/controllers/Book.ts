@@ -49,4 +49,26 @@ const deleteBook = (req: Request<{ bookId: string }>, res: Response, next: NextF
         .catch((error) => res.status(500).json({ error }));
 };
 
-export default { createBook, readBook, readAll, updateBook, deleteBook };
+const addTag = (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
+    const { tag } = req.body;
+
+    return BookService.addTag(req.params.bookId, tag)
+        .then((book) => (book ? res.status(200).json({ book }) : res.status(404).json({ message: 'not found' })))
+        .catch((error) => res.status(500).json({ error }));
+};
+
+const replaceTags = (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
+    const { tags } = req.body;
+
+    return BookService.replaceTags(req.params.bookId, tags)
+        .then((book) => (book ? res.status(200).json({ book }) : res.status(404).json({ message: 'not found' })))
+        .catch((error) => res.status(500).json({ error }));
+};
+
+const removeTag = (req: Request<{ bookId: string; tag: string }>, res: Response, next: NextFunction) => {
+    return BookService.removeTag(req.params.bookId, req.params.tag)
+        .then((book) => (book ? res.status(200).json({ book }) : res.status(404).json({ message: 'not found' })))
+        .catch((error) => res.status(500).json({ error }));
+};
+
+export default { createBook, readBook, readAll, updateBook, deleteBook, addTag, replaceTags, removeTag };
