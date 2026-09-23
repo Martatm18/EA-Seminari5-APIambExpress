@@ -37,6 +37,7 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
 ## Antes de abrir un pull request
 
 - `npm run build` termina sin errores.
+- `npm run lint` termina sin errores.
 - El código está formateado con Prettier (se hace solo al guardar en VS Code).
 - No subes tu `.env`. Si añades una variable nueva, añádela también a `.env.example`.
 - Actualizas la sección "Estado del proyecto" de este archivo.
@@ -69,6 +70,9 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
   año, páginas, idioma, tags y precio, y ahora puede tener **más de un autor** (`authors`).
 - **Datos de ejemplo**: `npm run seed` llena la base de datos con 5 autores y 12 libros
   (`src/seed.ts` y `src/seed-data.ts`). Con `-- --reset` la rehace desde cero.
+- **Linter con Oxlint**: `npm run lint` analiza el código TypeScript de `src/` y
+  `npm run lint:fix` aplica las correcciones automáticas disponibles. La configuración está en
+  `.oxlintrc.json`.
 
 ### En curso
 
@@ -83,7 +87,7 @@ Objetivos del Seminario 5:
 - [ ] Middleware de entrada: validación y logger
 - [ ] Middleware de salida: gestor de errores
 - [ ] Documentación con Swagger
-- [ ] Linter
+- [x] Linter
 
 Y dos cosas que han quedado a medias al añadir los atributos nuevos:
 
