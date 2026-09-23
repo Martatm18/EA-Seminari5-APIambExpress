@@ -25,6 +25,8 @@ Qué está hecho y qué queda por hacer: [CONTRIBUTING.md](CONTRIBUTING.md).
 | [chalk](https://github.com/chalk/chalk) | 4.1 | Pone colores a los mensajes de la consola |
 | [cors](https://github.com/expressjs/cors) | 2.8 | Controla desde qué origen puede llamar un navegador a la API |
 | [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) | 5.0 | Muestra la documentación de la API en `/api-docs` |
+| [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) | 6.3 | Construye esa documentación leyendo los comentarios `@openapi` de las rutas |
+| [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) | 6.2 | Convierte los esquemas de Joi en los esquemas de la documentación |
 | [tsx](https://tsx.is/) | 4.23 | Ejecuta TypeScript sin compilar y reinicia la API al guardar (`npm run dev`) |
 | [Oxlint](https://oxc.rs/docs/guide/usage/linter) | 1.85 | Analiza el código de `src/` y detecta errores comunes |
 | [Prettier](https://prettier.io/) | extensión de VS Code | Da formato al código al guardar (reglas en `.prettierrc`) |
@@ -149,6 +151,11 @@ npm run seed -- --reset
 
 Siempre trabaja sobre la base de datos de tu `.env`.
 
+Todos los autores de ejemplo tienen la contraseña `seminari5`, y está escrita a la vista en
+`src/seed-data.ts`. Es un proyecto de clase: las contraseñas son públicas a propósito, para que
+cualquiera que clone el repositorio pueda entrar con cualquier usuario. En la base de datos sí se
+guardan cifradas, porque el modelo las cifra antes de guardarlas.
+
 ## Estructura del proyecto
 
 ```
@@ -164,6 +171,8 @@ src/
   middleware/      Lo que se ejecuta entre la ruta y el controller
     Joi.ts           Guardas: validan el body (422) y el id de la URL (400)
     Cors.ts          Cabeceras de CORS, configuradas con CORS_ORIGIN
+    Logger.ts        Escribe en consola cada petición y su código de respuesta
+    ErrorHandler.ts  Convierte cualquier error en su código: 400, 404, 409, 422 o 500
   controllers/     Leen la petición (req), llaman al service y eligen la respuesta (res)
     Author.ts, Book.ts
   services/        Leen y escriben en la base de datos a través de los models. No saben que existe HTTP
@@ -211,8 +220,20 @@ curl -X POST http://localhost:1337/authors -H "Content-Type: application/json" -
 ```
 
 Códigos de respuesta: 201 al crear, 200 al leer o modificar, 204 al borrar, 400 si el id de la URL
-no tiene forma de id de MongoDB, 404 si el id no existe, 422 si el body no es válido y 500 si falla
-algo en el servidor.
+no tiene forma de id de MongoDB, 404 si el id no existe, 409 si el email o el ISBN ya existen,
+422 si el body no es válido y 500 si falla algo en el servidor.
+
+## Documentación de la API
+
+La documentación de cada endpoint se escribe en un comentario `/** @openapi */` justo encima de su
+ruta, en `src/routes/`. Al arrancar, `swagger-jsdoc` lee esos comentarios y monta el documento que
+se ve en http://localhost:1337/api-docs.
+
+Los esquemas del body no se escriben a mano: `joi-to-swagger` los genera a partir de los mismos
+esquemas de Joi que validan las peticiones, así que la documentación no puede quedarse desfasada
+cuando se añade o se quita un campo.
+
+Las piezas comunes (datos generales, esquemas y respuestas de error) están en `src/config/swagger.ts`.
 
 ## Cómo contribuir
 

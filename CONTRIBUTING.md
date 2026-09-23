@@ -73,6 +73,16 @@ Cada commit es un cambio con sentido propio. El mensaje empieza por el tipo de c
 - **Linter con Oxlint**: `npm run lint` analiza el código TypeScript de `src/` y
   `npm run lint:fix` aplica las correcciones automáticas disponibles. La configuración está en
   `.oxlintrc.json`.
+- **Logger como middleware**: `middleware/Logger.ts` sale de `server.ts` y escribe cada petición y
+  su código de respuesta.
+- **Gestor de errores**: `middleware/ErrorHandler.ts`, el middleware de cuatro parámetros que se
+  registra el último. Traduce cada error a su código (400, 404, 409, 422) y responde 500 con un
+  mensaje genérico cuando el fallo es inesperado, sin enseñar detalles internos.
+- **Hooks de Mongoose**: `pre-save` cifra la contraseña con scrypt y sal aleatoria, solo si ha
+  cambiado; `post-save` escribe en el logger la simulación del correo de bienvenida.
+- **Swagger con anotaciones**: cada ruta lleva su comentario `@openapi` y los esquemas se generan
+  desde los de Joi con `joi-to-swagger`, así que no se desfasan. `config/swagger.ts` pasa de 685
+  líneas escritas a mano a 61.
 
 ### En curso
 
@@ -84,14 +94,14 @@ Objetivos del Seminario 5:
 
 - [x] Estructura del proyecto
 - [x] Middleware de CORS
-- [ ] Middleware de entrada: validación y logger
-- [ ] Middleware de salida: gestor de errores
-- [ ] Documentación con Swagger
+- [x] Middleware de entrada: validación y logger
+- [x] Middleware de salida: gestor de errores
+- [x] Documentación con Swagger
 - [x] Linter
 
-Y dos cosas que han quedado a medias al añadir los atributos nuevos:
+Los objetivos del seminario están cubiertos. Lo único abierto es el ejercicio propuesto:
 
-- [ ] **Cifrar la contraseña** con un hook `pre-save`. Ahora se guarda tal cual, aunque nunca se
-  devuelve en las respuestas.
-- [ ] **Responder 409 cuando se repite un email o un ISBN**. Hoy sale un 500 con el error de
-  MongoDB, porque todavía no hay gestor de errores.
+- [ ] **CRUD de los tags de un libro**, con el enunciado en [EXERCISE.md](EXERCISE.md).
+
+Nota sobre las contraseñas: las de los datos de ejemplo son públicas a propósito (ver el README).
+Este es un proyecto de clase, no una aplicación real.
