@@ -38,6 +38,15 @@ const StartServer = () => {
     router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     /** Healthcheck */
+    /**
+     * @openapi
+     * /ping:
+     *   get:
+     *     tags: [Health]
+     *     summary: Comprueba que la API está viva
+     *     responses:
+     *       200: { description: La API responde }
+     */
     router.get('/ping', (req, res) => res.status(200).json({ hello: 'world' }));
 
     /** Error handling */
