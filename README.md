@@ -67,6 +67,29 @@ cp .env.example .env
 | `SERVER_PORT` | Puerto en el que escucha la API | `1337` |
 | `CORS_ORIGIN` | Desde qué dirección se puede llamar a la API desde un navegador | `*` (cualquiera) |
 
+## Llenar la base de datos (la primera vez)
+
+Si arrancas con la base de datos vacía, la API funciona pero no devuelve nada. Para tener datos con
+los que probar, hay 5 autores y 12 libros de ejemplo en `src/seed-data.ts`:
+
+```
+npm run seed
+```
+
+Este comando solo inserta los datos si la base de datos está vacía. Si ya tienes datos de pruebas
+anteriores, o vienen de una versión antigua de los modelos, hay que borrarlos y volver a crearlos:
+
+```
+npm run seed -- --reset
+```
+
+Siempre trabaja sobre la base de datos de tu `.env`.
+
+Todos los autores de ejemplo tienen la contraseña `seminari5`, y está escrita a la vista en
+`src/seed-data.ts`. Es un proyecto de clase: las contraseñas son públicas a propósito, para que
+cualquiera que clone el repositorio pueda entrar con cualquier usuario. En la base de datos sí se
+guardan cifradas, porque el modelo las cifra antes de guardarlas.
+
 ## Ejecutar
 
 Mientras programas, arranca la API en modo desarrollo. Se reinicia sola cada vez que guardas un archivo:
@@ -133,28 +156,6 @@ return Service.method(req.body)
 Ambas formas esperan la misma operación, pero `async/await` facilita la lectura y el manejo de
 errores. `return` sigue siendo útil cuando una función necesita devolver un valor o detener su
 ejecución; simplemente no es necesario para enviar una respuesta de Express.
-
-## Datos de ejemplo
-
-Para no empezar con la base de datos vacía, hay 5 autores y 12 libros de ejemplo en `src/seed-data.ts`:
-
-```
-npm run seed
-```
-
-Este comando solo inserta los datos si la base de datos está vacía. Para borrar los autores y los
-libros que haya y volver a crearlos:
-
-```
-npm run seed -- --reset
-```
-
-Siempre trabaja sobre la base de datos de tu `.env`.
-
-Todos los autores de ejemplo tienen la contraseña `seminari5`, y está escrita a la vista en
-`src/seed-data.ts`. Es un proyecto de clase: las contraseñas son públicas a propósito, para que
-cualquiera que clone el repositorio pueda entrar con cualquier usuario. En la base de datos sí se
-guardan cifradas, porque el modelo las cifra antes de guardarlas.
 
 ## Estructura del proyecto
 
