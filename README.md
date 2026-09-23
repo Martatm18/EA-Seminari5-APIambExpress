@@ -25,7 +25,10 @@ Qué está hecho y qué queda por hacer: [CONTRIBUTING.md](CONTRIBUTING.md).
 | [chalk](https://github.com/chalk/chalk) | 4.1 | Pone colores a los mensajes de la consola |
 | [cors](https://github.com/expressjs/cors) | 2.8 | Controla desde qué origen puede llamar un navegador a la API |
 | [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) | 5.0 | Muestra la documentación de la API en `/api-docs` |
+| [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) | 6.3 | Construye esa documentación leyendo los comentarios `@openapi` de las rutas |
+| [joi-to-swagger](https://github.com/Twipped/joi-to-swagger) | 6.2 | Convierte los esquemas de Joi en los esquemas de la documentación |
 | [tsx](https://tsx.is/) | 4.23 | Ejecuta TypeScript sin compilar y reinicia la API al guardar (`npm run dev`) |
+| [Oxlint](https://oxc.rs/docs/guide/usage/linter) | 1.85 | Analiza el código de `src/` y detecta errores comunes |
 | [Prettier](https://prettier.io/) | extensión de VS Code | Da formato al código al guardar (reglas en `.prettierrc`) |
 
 ## Requisitos previos
@@ -64,6 +67,29 @@ cp .env.example .env
 | `SERVER_PORT` | Puerto en el que escucha la API | `1337` |
 | `CORS_ORIGIN` | Desde qué dirección se puede llamar a la API desde un navegador | `*` (cualquiera) |
 
+## Llenar la base de datos (la primera vez)
+
+Si arrancas con la base de datos vacía, la API funciona pero no devuelve nada. Para tener datos con
+los que probar, hay 5 autores y 12 libros de ejemplo en `src/seed-data.ts`:
+
+```
+npm run seed
+```
+
+Este comando solo inserta los datos si la base de datos está vacía. Si ya tienes datos de pruebas
+anteriores, o vienen de una versión antigua de los modelos, hay que borrarlos y volver a crearlos:
+
+```
+npm run seed -- --reset
+```
+
+Siempre trabaja sobre la base de datos de tu `.env`.
+
+Todos los autores de ejemplo tienen la contraseña `seminari5`, y está escrita a la vista en
+`src/seed-data.ts`. Es un proyecto de clase: las contraseñas son públicas a propósito, para que
+cualquiera que clone el repositorio pueda entrar con cualquier usuario. En la base de datos sí se
+guardan cifradas, porque el modelo las cifra antes de guardarlas.
+
 ## Ejecutar
 
 Mientras programas, arranca la API en modo desarrollo. Se reinicia sola cada vez que guardas un archivo:
@@ -82,22 +108,54 @@ npm start
 
 `npm run build` compila de TypeScript a JavaScript en `build/`. Si cambias el código, vuelve a ejecutarlo antes de `npm start`.
 
-## Datos de ejemplo
-
-Para no empezar con la base de datos vacía, hay 5 autores y 12 libros de ejemplo en `src/seed-data.ts`:
-
+Para analizar el código con Oxlint:
 ```
-npm run seed
+npm run lint
 ```
 
-Este comando solo inserta los datos si la base de datos está vacía. Para borrar los autores y los
-libros que haya y volver a crearlos:
-
+El linter analiza únicamente `src/`; la carpeta `build/` contiene archivos generados por TypeScript.
+Para aplicar las correcciones automáticas disponibles:
 ```
-npm run seed -- --reset
+npm run lint:fix
 ```
 
-Siempre trabaja sobre la base de datos de tu `.env`.
+## Controllers y operaciones asíncronas
+
+Las consultas a MongoDB son operaciones asíncronas: tardan un tiempo y devuelven una
+`Promise`. En los controllers usamos `async/await` para esperar su resultado de forma clara.
+
+La estructura recomendada es:
+
+```ts
+const handler = async (req: Request, res: Response) => {
+  try {
+    const result = await Service.method(req.body);
+    res.status(200).json({ result });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+```
+
+- `async` permite utilizar `await` dentro de la función.
+- `await` espera a que termine la operación y guarda su resultado.
+- `try` contiene la operación que puede fallar.
+- `catch` devuelve un error `500` si la operación falla.
+
+En este proyecto no devolvemos la respuesta con `return`. El controller la envía directamente
+con `res.status(...).json(...)` o `res.status(...).send()`.
+
+La forma anterior usaba cadenas de Promises:
+
+```ts
+return Service.method(req.body)
+  .then((result) => res.status(200).json({ result }))
+  .catch((error) => res.status(500).json({ error }));
+```
+
+Ambas formas esperan la misma operación, pero `async/await` facilita la lectura y el manejo de
+errores. `return` sigue siendo útil cuando una función necesita devolver un valor o detener su
+ejecución; simplemente no es necesario para enviar una respuesta de Express.
 
 ## Estructura del proyecto
 
@@ -114,6 +172,8 @@ src/
   middleware/      Lo que se ejecuta entre la ruta y el controller
     Joi.ts           Guardas: validan el body (422) y el id de la URL (400)
     Cors.ts          Cabeceras de CORS, configuradas con CORS_ORIGIN
+    Logger.ts        Escribe en consola cada petición y su código de respuesta
+    ErrorHandler.ts  Convierte cualquier error en su código: 400, 404, 409, 422 o 500
   controllers/     Leen la petición (req), llaman al service y eligen la respuesta (res)
     Author.ts, Book.ts
   services/        Leen y escriben en la base de datos a través de los models. No saben que existe HTTP
@@ -161,8 +221,20 @@ curl -X POST http://localhost:1337/authors -H "Content-Type: application/json" -
 ```
 
 Códigos de respuesta: 201 al crear, 200 al leer o modificar, 204 al borrar, 400 si el id de la URL
-no tiene forma de id de MongoDB, 404 si el id no existe, 422 si el body no es válido y 500 si falla
-algo en el servidor.
+no tiene forma de id de MongoDB, 404 si el id no existe, 409 si el email o el ISBN ya existen,
+422 si el body no es válido y 500 si falla algo en el servidor.
+
+## Documentación de la API
+
+La documentación de cada endpoint se escribe en un comentario `/** @openapi */` justo encima de su
+ruta, en `src/routes/`. Al arrancar, `swagger-jsdoc` lee esos comentarios y monta el documento que
+se ve en http://localhost:1337/api-docs.
+
+Los esquemas del body no se escriben a mano: `joi-to-swagger` los genera a partir de los mismos
+esquemas de Joi que validan las peticiones, así que la documentación no puede quedarse desfasada
+cuando se añade o se quita un campo.
+
+Las piezas comunes (datos generales, esquemas y respuestas de error) están en `src/config/swagger.ts`.
 
 ## Cómo contribuir
 

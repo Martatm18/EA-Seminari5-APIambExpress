@@ -1,5 +1,8 @@
 # Ejercicio: gestionar los tags de un libro
 
+Este ejercicio parte de la API REST de autores y libros de este repositorio. Antes de empezar,
+sigue el [README](README.md) para instalar el proyecto, configurar el `.env` y arrancarlo.
+
 Cada libro tiene una lista de `tags` (`ciencia-ficcion`, `fantasia`, `novela`, `ensayo`, `poesia`,
 `historia`). Hoy la única forma de cambiarlos es reemplazar el libro entero con
 `PUT /books/:bookId`, enviando todos sus campos. La idea de este ejercicio es tratar los tags como
@@ -65,7 +68,9 @@ curl -X DELETE http://localhost:1337/books/<id>/tags/fantasia
 El campo `tags` ya existe en el modelo, con su lista de valores permitidos. No hace falta cambiar
 los modelos, el seed ni el CORS.
 
-## Entrega
+## Cuando termines
 
-Una rama propia a partir de `develop`, un pull request y una línea en el apartado "Hecho" de
-[CONTRIBUTING.md](CONTRIBUTING.md).
+El ejercicio está resuelto cuando las tres rutas responden lo que dice la tabla de criterios de
+aceptación, y el código respeta el reparto por capas del resto del proyecto: la ruta declara el
+endpoint y encadena las guardas, el controller no consulta la base de datos, y el service es el
+único que habla con Mongoose.

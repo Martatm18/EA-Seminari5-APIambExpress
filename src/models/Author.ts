@@ -1,4 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { randomBytes, scrypt } from 'node:crypto';
+import { promisify } from 'node:util';
+import Logging from '../library/Logging';
+
+const deriveKey = promisify(scrypt);
 
 export interface IAuthor {
     name: string;
@@ -20,8 +25,8 @@ const AuthorSchema: Schema = new Schema(
         name: { type: String, required: true, trim: true },
         // El email identifica al autor: no puede repetirse
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-        // select: false hace que la contraseña no salga nunca en las respuestas.
-        // Todavía se guarda tal cual: cifrarla es la tarea del hook pre-save (ver CONTRIBUTING).
+        // select: false hace que la contraseña no salga en las consultas,
+        // y el hook pre-save de más abajo la guarda cifrada.
         password: { type: String, required: true, select: false },
         birthDate: { type: Date },
         nationality: { type: String, trim: true },
@@ -44,5 +49,19 @@ const AuthorSchema: Schema = new Schema(
         }
     }
 );
+
+AuthorSchema.pre('save', async function () {
+    if (!this.isModified('password')) {
+        return;
+    }
+
+    const salt = randomBytes(16).toString('hex');
+    const derivedKey = (await deriveKey(String(this.password), salt, 64)) as Buffer;
+    this.password = `scrypt:${salt}:${derivedKey.toString('hex')}`;
+});
+
+AuthorSchema.post('save', function (author) {
+    Logging.info(`Email simulation: welcome email sent to ${author.email}`);
+});
 
 export default mongoose.model<IAuthorModel>('Author', AuthorSchema);

@@ -4,10 +4,103 @@ import { Schemas, ValidateId, ValidateJoi } from '../middleware/Joi';
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /books:
+ *   post:
+ *     tags: [Books]
+ *     summary: Crea un libro
+ *     description: Un libro necesita al menos un autor, y cada autor se indica con su id.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/BookInput' }
+ *     responses:
+ *       201:
+ *         description: Libro creado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Book' }
+ *       409: { $ref: '#/components/responses/Conflict' }
+ *       422: { $ref: '#/components/responses/Unprocessable' }
+ *       500: { $ref: '#/components/responses/ServerError' }
+ */
 router.post('/', ValidateJoi(Schemas.book.create), controller.createBook);
+
+/**
+ * @openapi
+ * /books/{bookId}:
+ *   get:
+ *     tags: [Books]
+ *     summary: Devuelve un libro, con los datos de sus autores
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema: { type: string, pattern: '^[0-9a-fA-F]{24}$' }
+ *         example: 6ab2d1c247a7d5e4fe530049
+ *     responses:
+ *       200: { $ref: '#/components/responses/BookOne' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ */
 router.get('/:bookId', ValidateId('bookId'), controller.readBook);
+
+/**
+ * @openapi
+ * /books:
+ *   get:
+ *     tags: [Books]
+ *     summary: Lista todos los libros, con los datos de sus autores
+ *     responses:
+ *       200: { $ref: '#/components/responses/BookList' }
+ *       500: { $ref: '#/components/responses/ServerError' }
+ */
 router.get('/', controller.readAll);
+
+/**
+ * @openapi
+ * /books/{bookId}:
+ *   put:
+ *     tags: [Books]
+ *     summary: Reemplaza los datos de un libro
+ *     description: Hay que enviar el libro entero, no solo los campos que cambian.
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema: { type: string, pattern: '^[0-9a-fA-F]{24}$' }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/BookInput' }
+ *     responses:
+ *       200: { $ref: '#/components/responses/BookOne' }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ *       409: { $ref: '#/components/responses/Conflict' }
+ *       422: { $ref: '#/components/responses/Unprocessable' }
+ */
 router.put('/:bookId', ValidateId('bookId'), ValidateJoi(Schemas.book.update), controller.updateBook);
+
+/**
+ * @openapi
+ * /books/{bookId}:
+ *   delete:
+ *     tags: [Books]
+ *     summary: Borra un libro
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema: { type: string, pattern: '^[0-9a-fA-F]{24}$' }
+ *     responses:
+ *       204: { description: Libro borrado, sin contenido }
+ *       400: { $ref: '#/components/responses/BadRequest' }
+ *       404: { $ref: '#/components/responses/NotFound' }
+ */
 router.delete('/:bookId', ValidateId('bookId'), controller.deleteBook);
 
 //Tags de un libro
