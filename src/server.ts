@@ -45,7 +45,11 @@ const StartServer = () => {
      *     tags: [Health]
      *     summary: Comprueba que la API está viva
      *     responses:
-     *       200: { description: La API responde }
+     *       200:
+     *         description: La API responde
+     *         content:
+     *           application/json:
+     *             example: { hello: world }
      */
     router.get('/ping', (req, res) => res.status(200).json({ hello: 'world' }));
 

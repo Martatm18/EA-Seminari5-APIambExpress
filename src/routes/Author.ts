@@ -16,7 +16,11 @@ const router = express.Router();
  *         application/json:
  *           schema: { $ref: '#/components/schemas/AuthorInput' }
  *     responses:
- *       201: { description: Autor creado }
+ *       201:
+ *         description: Autor creado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Author' }
  *       409: { $ref: '#/components/responses/Conflict' }
  *       422: { $ref: '#/components/responses/Unprocessable' }
  *       500: { $ref: '#/components/responses/ServerError' }
@@ -36,7 +40,7 @@ router.post('/', ValidateJoi(Schemas.author.create), controller.createAuthor);
  *         schema: { type: string, pattern: '^[0-9a-fA-F]{24}$' }
  *         example: 6ab2d1ad9ada2730451295a7
  *     responses:
- *       200: { description: El autor pedido }
+ *       200: { $ref: '#/components/responses/AuthorOne' }
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  */
@@ -49,7 +53,7 @@ router.get('/:authorId', ValidateId('authorId'), controller.readAuthor);
  *     tags: [Authors]
  *     summary: Lista todos los autores
  *     responses:
- *       200: { description: Lista de autores }
+ *       200: { $ref: '#/components/responses/AuthorList' }
  *       500: { $ref: '#/components/responses/ServerError' }
  */
 router.get('/', controller.readAll);
@@ -72,7 +76,7 @@ router.get('/', controller.readAll);
  *         application/json:
  *           schema: { $ref: '#/components/schemas/AuthorInput' }
  *     responses:
- *       200: { description: Autor actualizado }
+ *       200: { $ref: '#/components/responses/AuthorOne' }
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  *       409: { $ref: '#/components/responses/Conflict' }

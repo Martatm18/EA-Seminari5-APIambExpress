@@ -17,7 +17,11 @@ const router = express.Router();
  *         application/json:
  *           schema: { $ref: '#/components/schemas/BookInput' }
  *     responses:
- *       201: { description: Libro creado }
+ *       201:
+ *         description: Libro creado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Book' }
  *       409: { $ref: '#/components/responses/Conflict' }
  *       422: { $ref: '#/components/responses/Unprocessable' }
  *       500: { $ref: '#/components/responses/ServerError' }
@@ -37,7 +41,7 @@ router.post('/', ValidateJoi(Schemas.book.create), controller.createBook);
  *         schema: { type: string, pattern: '^[0-9a-fA-F]{24}$' }
  *         example: 6ab2d1c247a7d5e4fe530049
  *     responses:
- *       200: { description: El libro pedido }
+ *       200: { $ref: '#/components/responses/BookOne' }
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  */
@@ -50,7 +54,7 @@ router.get('/:bookId', ValidateId('bookId'), controller.readBook);
  *     tags: [Books]
  *     summary: Lista todos los libros, con los datos de sus autores
  *     responses:
- *       200: { description: Lista de libros }
+ *       200: { $ref: '#/components/responses/BookList' }
  *       500: { $ref: '#/components/responses/ServerError' }
  */
 router.get('/', controller.readAll);
@@ -73,7 +77,7 @@ router.get('/', controller.readAll);
  *         application/json:
  *           schema: { $ref: '#/components/schemas/BookInput' }
  *     responses:
- *       200: { description: Libro actualizado }
+ *       200: { $ref: '#/components/responses/BookOne' }
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  *       409: { $ref: '#/components/responses/Conflict' }
