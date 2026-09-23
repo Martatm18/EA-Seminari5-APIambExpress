@@ -1,4 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { randomBytes, scrypt } from 'node:crypto';
+import { promisify } from 'node:util';
+import Logging from '../library/Logging';
+
+const deriveKey = promisify(scrypt);
 
 export interface IAuthor {
     name: string;
@@ -44,5 +49,19 @@ const AuthorSchema: Schema = new Schema(
         }
     }
 );
+
+AuthorSchema.pre('save', async function () {
+    if (!this.isModified('password')) {
+        return;
+    }
+
+    const salt = randomBytes(16).toString('hex');
+    const derivedKey = (await deriveKey(String(this.password), salt, 64)) as Buffer;
+    this.password = `scrypt:${salt}:${derivedKey.toString('hex')}`;
+});
+
+AuthorSchema.post('save', function (author) {
+    Logging.info(`Email simulation: welcome email sent to ${author.email}`);
+});
 
 export default mongoose.model<IAuthorModel>('Author', AuthorSchema);

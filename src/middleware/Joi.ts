@@ -2,7 +2,6 @@ import Joi, { ObjectSchema } from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import { IAuthor } from '../models/Author';
 import { BOOK_LANGUAGES, BOOK_TAGS, IBook } from '../models/Book';
-import Logging from '../library/Logging';
 
 export const ValidateJoi = (schema: ObjectSchema) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -11,9 +10,7 @@ export const ValidateJoi = (schema: ObjectSchema) => {
 
             next();
         } catch (error) {
-            Logging.error(error);
-
-            return res.status(422).json({ error });
+            next(error);
         }
     };
 };
@@ -64,10 +61,7 @@ export const Schemas = {
     book: {
         create: Joi.object<IBook>({
             title: Joi.string().required(),
-            authors: Joi.array()
-                .items(Joi.string().regex(OBJECT_ID))
-                .min(1)
-                .required(),
+            authors: Joi.array().items(Joi.string().regex(OBJECT_ID)).min(1).required(),
             isbn: Joi.string().required(),
             edition: Joi.number().min(1),
             publisher: Joi.string(),
@@ -79,10 +73,7 @@ export const Schemas = {
         }),
         update: Joi.object<IBook>({
             title: Joi.string().required(),
-            authors: Joi.array()
-                .items(Joi.string().regex(OBJECT_ID))
-                .min(1)
-                .required(),
+            authors: Joi.array().items(Joi.string().regex(OBJECT_ID)).min(1).required(),
             isbn: Joi.string().required(),
             edition: Joi.number().min(1),
             publisher: Joi.string(),

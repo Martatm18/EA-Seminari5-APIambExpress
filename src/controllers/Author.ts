@@ -1,19 +1,16 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import AuthorService from '../services/AuthorService';
 
-const createAuthor = async (req: Request, res: Response) => {
+const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const author = await AuthorService.createAuthor(req.body);
         res.status(201).json({ author });
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const readAuthor = async (
-    req: Request<{ authorId: string }>,
-    res: Response
-) => {
+const readAuthor = async (req: Request<{ authorId: string }>, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
 
     try {
@@ -25,23 +22,20 @@ const readAuthor = async (
             res.status(404).json({ message: 'not found' });
         }
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const readAll = async (req: Request, res: Response) => {
+const readAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authors = await AuthorService.getAllAuthors();
         res.status(200).json({ authors });
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const updateAuthor = async (
-    req: Request<{ authorId: string }>,
-    res: Response
-) => {
+const updateAuthor = async (req: Request<{ authorId: string }>, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
 
     try {
@@ -53,14 +47,11 @@ const updateAuthor = async (
             res.status(404).json({ message: 'not found' });
         }
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const deleteAuthor = async (
-    req: Request<{ authorId: string }>,
-    res: Response
-) => {
+const deleteAuthor = async (req: Request<{ authorId: string }>, res: Response, next: NextFunction) => {
     const authorId = req.params.authorId;
 
     try {
@@ -72,7 +63,7 @@ const deleteAuthor = async (
             res.status(404).json({ message: 'not found' });
         }
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 

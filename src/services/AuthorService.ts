@@ -19,7 +19,14 @@ export const getAllAuthors = () => {
 
 //Actualiza un autor en la base de datos
 export const updateAuthor = (authorId: string, data: IAuthor) => {
-    return Author.findByIdAndUpdate(authorId, data, { returnDocument: 'after' });
+    return Author.findById(authorId).then(async (author) => {
+        if (!author) {
+            return null;
+        }
+
+        Object.assign(author, data);
+        return author.save();
+    });
 };
 
 //Elimina un autor de la base de datos

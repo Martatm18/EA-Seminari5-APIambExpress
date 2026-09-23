@@ -1,16 +1,16 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import BookService from '../services/BookService';
 
-const createBook = async (req: Request, res: Response) => {
+const createBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const book = await BookService.createBook(req.body);
         res.status(201).json({ book });
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const readBook = async (req: Request<{ bookId: string }>, res: Response) => {
+const readBook = async (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
     const bookId = req.params.bookId;
 
     try {
@@ -22,20 +22,20 @@ const readBook = async (req: Request<{ bookId: string }>, res: Response) => {
             res.status(404).json({ message: 'not found' });
         }
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const readAll = async (req: Request, res: Response) => {
+const readAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const books = await BookService.getAllBooks();
         res.status(200).json({ books });
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const updateBook = async (req: Request<{ bookId: string }>, res: Response) => {
+const updateBook = async (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
     const bookId = req.params.bookId;
 
     try {
@@ -47,11 +47,11 @@ const updateBook = async (req: Request<{ bookId: string }>, res: Response) => {
             res.status(404).json({ message: 'not found' });
         }
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 
-const deleteBook = async (req: Request<{ bookId: string }>, res: Response) => {
+const deleteBook = async (req: Request<{ bookId: string }>, res: Response, next: NextFunction) => {
     const bookId = req.params.bookId;
 
     try {
@@ -63,7 +63,7 @@ const deleteBook = async (req: Request<{ bookId: string }>, res: Response) => {
             res.status(404).json({ message: 'not found' });
         }
     } catch (error) {
-        res.status(500).json({ error });
+        next(error);
     }
 };
 

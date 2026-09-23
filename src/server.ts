@@ -2,8 +2,10 @@ import express from 'express';
 import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
-import Logging from './library/Logging';
 import { Cors } from './middleware/Cors';
+import Logging from './library/Logging';
+import Logger from './middleware/Logger';
+import ErrorHandler from './middleware/ErrorHandler';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
 import swaggerUi from 'swagger-ui-express'; // permite mostrar Swagger en el navegador.
@@ -22,18 +24,7 @@ mongoose
 
 /** Only Start Server if Mongoose Connects */
 const StartServer = () => {
-    /** Log the request */
-    router.use((req, res, next) => {
-        /** Log the req */
-        Logging.info(`Incomming - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
-
-        res.on('finish', () => {
-            /** Log the res */
-            Logging.info(`Result - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}] - STATUS: [${res.statusCode}]`);
-        });
-
-        next();
-    });
+    router.use(Logger);
 
     router.use(express.urlencoded({ extended: true }));
     router.use(express.json());
@@ -47,18 +38,14 @@ const StartServer = () => {
     router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     /** Healthcheck */
-    router.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }));
+    router.get('/ping', (req, res) => res.status(200).json({ hello: 'world' }));
 
     /** Error handling */
     router.use((req, res, next) => {
-        const error = new Error('Not found');
-
-        Logging.error(error);
-
-        res.status(404).json({
-            message: error.message
-        });
+        next(new Error('Not found'));
     });
+
+    router.use(ErrorHandler);
 
     http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
 };
