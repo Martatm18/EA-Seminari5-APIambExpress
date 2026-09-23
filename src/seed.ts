@@ -32,7 +32,8 @@ const seed = async () => {
         return;
     }
 
-    const createdAuthors = await Author.insertMany(authorsSeed);
+    // create() dispara los hooks del modelo: la contrasena se guarda cifrada
+    const createdAuthors = await Author.create(authorsSeed);
     Logging.info(`Autores creados: ${createdAuthors.length}`);
 
     // Cada libro trae los emails de sus autores; aquí se cambian por los ids que les ha dado MongoDB

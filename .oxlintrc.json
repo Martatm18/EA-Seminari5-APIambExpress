@@ -5,5 +5,11 @@
         "no-console": "warn",
         "eqeqeq": "error",
         "no-debugger": "error"
-    }
+    },
+    "overrides": [
+        {
+            "files": ["src/library/Logging.ts"],
+            "rules": { "no-console": "off" }
+        }
+    ]
 }

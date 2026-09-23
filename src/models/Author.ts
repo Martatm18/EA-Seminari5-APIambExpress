@@ -25,8 +25,8 @@ const AuthorSchema: Schema = new Schema(
         name: { type: String, required: true, trim: true },
         // El email identifica al autor: no puede repetirse
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-        // select: false hace que la contraseña no salga nunca en las respuestas.
-        // Todavía se guarda tal cual: cifrarla es la tarea del hook pre-save (ver CONTRIBUTING).
+        // select: false hace que la contraseña no salga en las consultas,
+        // y el hook pre-save de más abajo la guarda cifrada.
         password: { type: String, required: true, select: false },
         birthDate: { type: Date },
         nationality: { type: String, trim: true },
