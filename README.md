@@ -26,6 +26,7 @@ Qué está hecho y qué queda por hacer: [CONTRIBUTING.md](CONTRIBUTING.md).
 | [cors](https://github.com/expressjs/cors) | 2.8 | Controla desde qué origen puede llamar un navegador a la API |
 | [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) | 5.0 | Muestra la documentación de la API en `/api-docs` |
 | [tsx](https://tsx.is/) | 4.23 | Ejecuta TypeScript sin compilar y reinicia la API al guardar (`npm run dev`) |
+| [Oxlint](https://oxc.rs/docs/guide/usage/linter) | 1.85 | Analiza el código de `src/` y detecta errores comunes |
 | [Prettier](https://prettier.io/) | extensión de VS Code | Da formato al código al guardar (reglas en `.prettierrc`) |
 
 ## Requisitos previos
@@ -81,6 +82,55 @@ npm start
 ```
 
 `npm run build` compila de TypeScript a JavaScript en `build/`. Si cambias el código, vuelve a ejecutarlo antes de `npm start`.
+
+Para analizar el código con Oxlint:
+```
+npm run lint
+```
+
+El linter analiza únicamente `src/`; la carpeta `build/` contiene archivos generados por TypeScript.
+Para aplicar las correcciones automáticas disponibles:
+```
+npm run lint:fix
+```
+
+## Controllers y operaciones asíncronas
+
+Las consultas a MongoDB son operaciones asíncronas: tardan un tiempo y devuelven una
+`Promise`. En los controllers usamos `async/await` para esperar su resultado de forma clara.
+
+La estructura recomendada es:
+
+```ts
+const handler = async (req: Request, res: Response) => {
+  try {
+    const result = await Service.method(req.body);
+    res.status(200).json({ result });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+```
+
+- `async` permite utilizar `await` dentro de la función.
+- `await` espera a que termine la operación y guarda su resultado.
+- `try` contiene la operación que puede fallar.
+- `catch` devuelve un error `500` si la operación falla.
+
+En este proyecto no devolvemos la respuesta con `return`. El controller la envía directamente
+con `res.status(...).json(...)` o `res.status(...).send()`.
+
+La forma anterior usaba cadenas de Promises:
+
+```ts
+return Service.method(req.body)
+  .then((result) => res.status(200).json({ result }))
+  .catch((error) => res.status(500).json({ error }));
+```
+
+Ambas formas esperan la misma operación, pero `async/await` facilita la lectura y el manejo de
+errores. `return` sigue siendo útil cuando una función necesita devolver un valor o detener su
+ejecución; simplemente no es necesario para enviar una respuesta de Express.
 
 ## Datos de ejemplo
 

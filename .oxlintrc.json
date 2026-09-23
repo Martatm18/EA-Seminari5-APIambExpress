@@ -1,0 +1,9 @@
+{
+    "$schema": "https://oxc.rs/schema/oxlintrc.json",
+    "plugins": ["typescript"],
+    "rules": {
+        "no-console": "warn",
+        "eqeqeq": "error",
+        "no-debugger": "error"
+    }
+}
