@@ -1,7 +1,10 @@
 import express from 'express';
+
 import controller from '../controllers/Author';
+
 import { Schemas, ValidateId, ValidateJoi } from '../middleware/Joi';
 
+// Creamos el router que se encargara de las rutas relacionadas con los autores
 const router = express.Router();
 
 /**
@@ -25,6 +28,10 @@ const router = express.Router();
  *       422: { $ref: '#/components/responses/Unprocessable' }
  *       500: { $ref: '#/components/responses/ServerError' }
  */
+
+// Ruta para crear un autor nuevo
+// Primero comprobamos que los datos cumplen el esquema de Joi
+// Si son correctos llamamos a la funcion createAuthor del controlador
 router.post('/', ValidateJoi(Schemas.author.create), controller.createAuthor);
 
 /**
@@ -44,6 +51,9 @@ router.post('/', ValidateJoi(Schemas.author.create), controller.createAuthor);
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  */
+
+// Ruta para buscar un autor por su ID
+// Antes de llamar al controlador comprobamos que el ID tiene el formato correcto
 router.get('/:authorId', ValidateId('authorId'), controller.readAuthor);
 
 /**
@@ -56,6 +66,8 @@ router.get('/:authorId', ValidateId('authorId'), controller.readAuthor);
  *       200: { $ref: '#/components/responses/AuthorList' }
  *       500: { $ref: '#/components/responses/ServerError' }
  */
+
+// Ruta para obtener todos los autores
 router.get('/', controller.readAll);
 
 /**
@@ -82,6 +94,9 @@ router.get('/', controller.readAll);
  *       409: { $ref: '#/components/responses/Conflict' }
  *       422: { $ref: '#/components/responses/Unprocessable' }
  */
+
+// Ruta para actualizar un autor
+// Primero comprobamos que el ID sea correcto y despues validamos los datos recibidos
 router.put('/:authorId', ValidateId('authorId'), ValidateJoi(Schemas.author.update), controller.updateAuthor);
 
 /**
@@ -100,6 +115,10 @@ router.put('/:authorId', ValidateId('authorId'), ValidateJoi(Schemas.author.upda
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  */
+
+// Ruta para eliminar un autor por su ID
+// Comprobamos primero que el ID tenga un formato valido
 router.delete('/:authorId', ValidateId('authorId'), controller.deleteAuthor);
 
+// Exportamos el router para poder utilizar estas rutas en la aplicacion
 export = router;
