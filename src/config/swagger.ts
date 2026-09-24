@@ -1,5 +1,7 @@
 import path from 'node:path';
-import swaggerJsdoc from 'swagger-jsdoc';
+// Cargarlo mediante `require` evita que TypeScript necesite las declaraciones
+// de tipos de swagger-jsdoc (el paquete no las incluye).
+const swaggerJsdoc: typeof import('swagger-jsdoc').default = require('swagger-jsdoc');
 import j2s from 'joi-to-swagger';
 import { Schemas } from '../middleware/Joi';
 import { config } from './config';
