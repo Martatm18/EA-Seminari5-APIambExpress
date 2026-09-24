@@ -23,10 +23,9 @@ export const getAllBooks = () => {
 
 // Funcion que se encarga de actualizar un libro
 export const updateBook = (bookId: string, data: IBook) => {
-    // Buscamos el libro por su ID y actualizamos sus datos
-    // Con returnDocument after hacemos que devuelva el libro despues de actualizarlo
-    // Tambien obtenemos los datos de sus autores
-    return Book.findByIdAndUpdate(bookId, data, { returnDocument: 'after' }).populate('authors');
+    // Buscamos el libro por su ID y actualizamos sus datos.
+    // Con new: true devolvemos el documento actualizado y también poblamos autores.
+    return Book.findByIdAndUpdate(bookId, data, { new: true }).populate('authors');
 };
 
 // Funcion que se encarga de eliminar un libro de la base de datos
