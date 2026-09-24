@@ -1,7 +1,10 @@
 import express from 'express';
+
 import controller from '../controllers/Book';
+
 import { Schemas, ValidateId, ValidateJoi } from '../middleware/Joi';
 
+// Creamos el router que se encargara de las rutas relacionadas con los libros
 const router = express.Router();
 
 /**
@@ -26,6 +29,10 @@ const router = express.Router();
  *       422: { $ref: '#/components/responses/Unprocessable' }
  *       500: { $ref: '#/components/responses/ServerError' }
  */
+
+// Ruta para crear un libro nuevo
+// Primero comprobamos que los datos recibidos cumplen el esquema de Joi
+// Si son correctos llamamos a la funcion createBook del controlador
 router.post('/', ValidateJoi(Schemas.book.create), controller.createBook);
 
 /**
@@ -45,6 +52,9 @@ router.post('/', ValidateJoi(Schemas.book.create), controller.createBook);
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  */
+
+// Ruta para buscar un libro usando su ID
+// Antes de llamar al controlador comprobamos que el ID tenga un formato valido
 router.get('/:bookId', ValidateId('bookId'), controller.readBook);
 
 /**
@@ -57,6 +67,8 @@ router.get('/:bookId', ValidateId('bookId'), controller.readBook);
  *       200: { $ref: '#/components/responses/BookList' }
  *       500: { $ref: '#/components/responses/ServerError' }
  */
+
+// Ruta para obtener todos los libros
 router.get('/', controller.readAll);
 
 /**
@@ -83,6 +95,9 @@ router.get('/', controller.readAll);
  *       409: { $ref: '#/components/responses/Conflict' }
  *       422: { $ref: '#/components/responses/Unprocessable' }
  */
+
+// Ruta para actualizar un libro
+// Primero comprobamos que el ID sea correcto y despues validamos los datos recibidos
 router.put('/:bookId', ValidateId('bookId'), ValidateJoi(Schemas.book.update), controller.updateBook);
 
 /**
@@ -101,6 +116,10 @@ router.put('/:bookId', ValidateId('bookId'), ValidateJoi(Schemas.book.update), c
  *       400: { $ref: '#/components/responses/BadRequest' }
  *       404: { $ref: '#/components/responses/NotFound' }
  */
+
+// Ruta para eliminar un libro usando su ID
+// Comprobamos primero que el ID tenga un formato valido
 router.delete('/:bookId', ValidateId('bookId'), controller.deleteBook);
 
+// Exportamos el router para poder utilizar estas rutas en la aplicacion
 export = router;
