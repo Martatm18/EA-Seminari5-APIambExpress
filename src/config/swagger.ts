@@ -85,6 +85,8 @@ const errorResponse = (description: string, message: string) => ({
     }
 });
 
+const swaggerPath = (filePath: string) => filePath.replace(/\\/g, '/');
+
 const swaggerDocument = swaggerJsdoc({
     definition: {
         openapi: '3.0.0',
@@ -107,22 +109,10 @@ const swaggerDocument = swaggerJsdoc({
                 Book: bookSchema
             },
             responses: {
-                AuthorOne: okResponse(
-                    'Un autor',
-                    { type: 'object', properties: { author: authorSchema } },
-                    { author: authorExample }
-                ),
-                AuthorList: okResponse(
-                    'La lista de autores',
-                    { type: 'object', properties: { authors: { type: 'array', items: authorSchema } } },
-                    { authors: [authorExample] }
-                ),
+                AuthorOne: okResponse('Un autor', { type: 'object', properties: { author: authorSchema } }, { author: authorExample }),
+                AuthorList: okResponse('La lista de autores', { type: 'object', properties: { authors: { type: 'array', items: authorSchema } } }, { authors: [authorExample] }),
                 BookOne: okResponse('Un libro, con los datos de sus autores', { type: 'object', properties: { book: bookSchema } }, { book: bookExample }),
-                BookList: okResponse(
-                    'La lista de libros, con los datos de sus autores',
-                    { type: 'object', properties: { books: { type: 'array', items: bookSchema } } },
-                    { books: [bookExample] }
-                ),
+                BookList: okResponse('La lista de libros, con los datos de sus autores', { type: 'object', properties: { books: { type: 'array', items: bookSchema } } }, { books: [bookExample] }),
                 BadRequest: errorResponse('El id de la URL no tiene forma de id de MongoDB', 'authorId no es un id válido'),
                 NotFound: errorResponse('No existe ningún recurso con ese id', 'not found'),
                 Conflict: errorResponse('Ya existe otro recurso con ese email o ese ISBN', 'email ya existe'),
@@ -133,7 +123,12 @@ const swaggerDocument = swaggerJsdoc({
     },
     // __dirname es src/config con npm run dev y build/config con npm start:
     // en los dos casos se leen las rutas, porque al compilar se conservan los comentarios
-    apis: [path.join(__dirname, '../routes/*.{ts,js}'), path.join(__dirname, '../server.{ts,js}')]
+    apis: [
+        swaggerPath(path.join(__dirname, '../routes/*.ts')),
+        swaggerPath(path.join(__dirname, '../routes/*.js')),
+        swaggerPath(path.join(__dirname, '../server.ts')),
+        swaggerPath(path.join(__dirname, '../server.js'))
+    ]
 });
 
 export default swaggerDocument;
